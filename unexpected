@@ -7,3 +7,55 @@ Session Timeout: A session in Grafana is a period of time that a user is logged 
 Auto-refresh Setting: The auto-refresh setting in Grafana determines how frequently the dashboard updates itself to display the most recent data. If this setting is configured to a long interval, the dashboard might display outdated data. By reducing this interval, you can ensure that your dashboard is always displaying the most recent data.
 
 Remember, it’s important to monitor your network and server logs for any anomalies that could lead to such issues. If the problem persists, consider reaching out to the Grafana community or checking the Grafana documentation for more detailed troubleshooting steps. I hope this helps! Let me know if you have any other questions.
+
+
+https://github.com/grafana/grafana/issues/50841
+
+
+Here's a summary of the content:
+
+Issue:
+
+Grafana 9.0.0 and later versions encountered errors when switching datasources within a dashboard.
+The errors often involved 500 status codes and unexpected token errors in JSON parsing.
+The issue was particularly prevalent with Prometheus datasources in browser access mode.
+Root Cause:
+
+The problem stemmed from Grafana not properly passing custom headers, like X-Scope-OrgID, during variable lookups.
+This led to authentication failures and other issues with datasources that required specific headers.
+Resolution:
+
+The issue was fixed in Grafana version 9.1.6, released on September 20, 2022.
+The fix specifically addressed metadata requests for Prometheus datasources in browser access mode.
+Workarounds (for versions prior to 9.1.6):
+
+Server Access Mode: Switching to server access mode instead of browser access mode sometimes resolved the issue.
+Query_result Function: Using the query_result function instead of label_values in variables could work as a workaround.
+OAuth Proxy Upgrade: For those using an OAuth proxy, upgrading the proxy version sometimes helped.
+Cortex Ruler: Enabling Cortex Ruler (even without rules) inexplicably fixed the issue for some users.
+Additional Notes:
+
+Browser access mode is being deprecated and will be removed in Grafana 9.2.0.
+Server access mode is the recommended approach for accessing datasources.
+Some users reported slower response times in the UI with server access mode compared to browser mode.
+
+
+Thanks for clarifying that the 401 unauthorized error doesn't occur all the time but appears randomly in Grafana. This information helps narrow down the potential causes. Here are some additional insights based on the random nature of the issue:
+
+Possible Causes of Random 401 Errors:
+
+Session Expiry: If your session token expires or refreshes intermittently, it might lead to unexpected unauthorized errors.
+Network Instability: Temporary network fluctuations or intermittent issues with the external authentication provider can cause random authentication failures.
+Caching Issues: An out-of-date or corrupt cache in your browser or Grafana itself might lead to occasional authentication problems.
+Concurrency Issues: If multiple users are attempting to access the same dashboard or resources simultaneously, there might be race conditions leading to random unauthorized errors for some users.
+Grafana Bugs: In rare cases, bugs in Grafana itself can cause unexpected authentication failures.
+Recommended Troubleshooting Steps:
+
+Monitor Logs: Keep an eye on Grafana logs for any relevant error messages during the random unauthorized events.
+Check Session Timeouts: Review your session timeout settings and consider increasing them if your inactivity triggers automatic logouts.
+Network Diagnostics: Verify network stability and ensure proper communication with the external authentication provider.
+Clear Cache: Clear your browser cache and cookies after encountering the error, and if necessary, flush Grafana's cache following its documentation.
+Reduce Concurrency: If possible, limit the number of users accessing the same resources simultaneously to minimize potential race conditions.
+Grafana Versions: Check if you're using the latest stable version of Grafana as older versions might have known authentication bugs.
+Community Support: If trying the above steps doesn't resolve the issue, consider seeking help from the Grafana community forums, providing detailed information about your setup and the error messages you encounter.
+By understanding the potential causes and utilizing the provided troubleshooting steps, you should be able to identify and resolve the random 401 unauthorized errors in your Grafana instance.
